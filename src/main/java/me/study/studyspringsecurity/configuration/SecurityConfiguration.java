@@ -13,18 +13,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .mvcMatchers("/", "/info").permitAll()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
                 .mvcMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated();
 
         httpSecurity.formLogin();
         httpSecurity.httpBasic();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("yoonjeong").password("{noop}123").roles("USER").and()
-                .withUser("admin").password("{noop}456").roles("ADMIN");
     }
 }
