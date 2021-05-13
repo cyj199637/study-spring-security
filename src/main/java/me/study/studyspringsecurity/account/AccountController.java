@@ -1,20 +1,24 @@
 package me.study.studyspringsecurity.account;
 
+import me.study.studyspringsecurity.account.dto.CreateAccountRequest;
+import me.study.studyspringsecurity.account.dto.CreateAccountResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/{role}/{username}/{password}")
-    public Account signUp(@ModelAttribute Account account) {
-        return accountService.create(account);
+    @PostMapping
+    public ResponseEntity<CreateAccountResponse> signUp(@RequestBody CreateAccountRequest request) {
+        Account createdAccount = accountService.create(request.toEntity());
+        return ResponseEntity.ok(CreateAccountResponse.of(createdAccount));
     }
 }
