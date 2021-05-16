@@ -17,6 +17,10 @@ public class AccountService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /*
+        UserDetails: Principal 정보를 표현할 인터페이스
+            - Principal과 현재 애플리케이션의 커스텀 유저 객체와의 어댑터 역할
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByUsername(username);
