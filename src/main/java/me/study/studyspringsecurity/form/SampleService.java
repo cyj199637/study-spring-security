@@ -25,7 +25,7 @@ public class SampleService {
         - AbstractAuthenticationProcessingFilter.doFilter()
         - UsernamePasswordAuthenticationFilter.attemptAuthentication()
         - UsernamePasswordAuthenticationToken
- */
+    */
     public void check() {
         // 사용자 인증 성공 -> authentication 객체 생성 -> SecurityContextHolder에 주입
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
