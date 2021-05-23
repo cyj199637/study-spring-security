@@ -1,10 +1,19 @@
 package me.study.studyspringsecurity.configuration;
 
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 
 /*
 FilterChainProxy: Spring Security에서 사용하는 필터들을 관리하고 실행하는 역할
@@ -26,6 +35,32 @@ DelegatingFilterProxy
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    // 권한 위계 설정을 위한 커스텀 AccessDecisionmanager 정의
+    public AccessDecisionManager accessDecisionManager() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+
+        DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
+        handler.setRoleHierarchy(roleHierarchy);
+
+        WebExpressionVoter webExpressionVoter = new WebExpressionVoter();
+        webExpressionVoter.setExpressionHandler(handler);
+        List<AccessDecisionVoter<? extends Object>> voters = Arrays.asList(webExpressionVoter);
+
+        return new AffirmativeBased(voters);
+    }
+
+    // 실제 권한 위계 설정은 ExpressionHandler에서 이뤄지기 때문에 커스텀 ExpressionHandler만 정의하면 간단해짐
+    public SecurityExpressionHandler expressionHandler() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+
+        DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
+        handler.setRoleHierarchy(roleHierarchy);
+
+        return handler;
+    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
@@ -33,7 +68,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/info").permitAll()
                 .mvcMatchers("/accounts").permitAll()
                 .mvcMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated();
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
 
         // Spring Security를 적용 후 Post로 요청을 보내려면 CSRF 토큰이 필요
         // CSRF 토큰을 안 보내도 401로 응답하 않게끔 해주는 설정
