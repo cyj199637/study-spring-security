@@ -3,6 +3,7 @@ package me.study.studyspringsecurity.configuration;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
@@ -33,6 +34,7 @@ DelegatingFilterProxy
  */
 @Configuration
 @EnableWebSecurity
+@Order(1)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     // 권한 위계 설정을 위한 커스텀 AccessDecisionmanager 정의
@@ -73,7 +75,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .expressionHandler(expressionHandler());
 
         // Spring Security를 적용 후 Post로 요청을 보내려면 CSRF 토큰이 필요
-        // CSRF 토큰을 안 보내도 401로 응답하 않게끔 해주는 설정
+        // CSRF 토큰을 안 보내도 401로 응답하지 않게끔 해주는 설정
         httpSecurity.csrf()
             .ignoringAntMatchers("/accounts");
         httpSecurity.formLogin();
