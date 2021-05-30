@@ -3,6 +3,8 @@ package me.study.studyspringsecurity.form;
 import java.util.Collection;
 import me.study.studyspringsecurity.account.Account;
 import me.study.studyspringsecurity.account.AccountContext;
+import me.study.studyspringsecurity.common.SecurityLogger;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,5 +57,11 @@ public class SampleService {
         System.out.println("===============");
         System.out.println(authentication);
         System.out.println(userDetails.getUsername());
+    }
+
+    @Async
+    public void asyncService() {
+        SecurityLogger.log("Async Service");
+        System.out.println("Async Service is called");
     }
 }

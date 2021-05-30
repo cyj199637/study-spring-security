@@ -2,6 +2,7 @@ package me.study.studyspringsecurity.configuration;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
@@ -11,8 +12,10 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
 
@@ -71,6 +74,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/accounts").permitAll()
                 .mvcMatchers("/admin").hasRole("ADMIN")
                 .mvcMatchers("/user").hasRole("USER")
+                // ignoring() 설정과 결과는 같지만 처리 프로세스는 다름
+                // ignoring()은 지정한 요청을 아예 시큐리티 적용 자체를 하지 않지만, 아래 설정은 FilterChain에 있는 모든 필터를 타게 됨
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .anyRequest().authenticated()
                 .expressionHandler(expressionHandler());
 
@@ -80,5 +86,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .ignoringAntMatchers("/accounts");
         httpSecurity.formLogin();
         httpSecurity.httpBasic();
+
+        // MODE_INHERITABLETHREADLOCAL: 현재 스레드에서 생성된 하위 스레드에도 동일한 SecurityContext가 공유됨
+        //                           -> @Async로 만들어진 하위 스레드에도 공유 가능
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) throws Exception {
+        webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }

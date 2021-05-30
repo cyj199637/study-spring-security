@@ -1,13 +1,16 @@
 package me.study.studyspringsecurity.form;
 
+import java.util.concurrent.Callable;
 import me.study.studyspringsecurity.account.AccountContext;
 import me.study.studyspringsecurity.account.AccountRepository;
+import me.study.studyspringsecurity.common.SecurityLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.security.Principal;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class SampleController {
@@ -57,5 +60,27 @@ public class SampleController {
         model.addAttribute("message", "Hello, User " + principal.getName());
 
         return "user";
+    }
+
+    @GetMapping("/async-handler")
+    @ResponseBody
+    public Callable<String> asyncHandler() {
+        SecurityLogger.log("MVC");
+
+        // 별도의 스레드에서 처리하지만 WebAsyncManagerIntegrationFilter에 의해 동일한 Principal이 참조됨
+        return () -> {
+            SecurityLogger.log("Callable");
+            return "Async Handler";
+        };
+    }
+
+    @GetMapping("/async-service")
+    @ResponseBody
+    public String asyncService() {
+        SecurityLogger.log("MVC, before async service");
+        sampleService.asyncService();
+        SecurityLogger.log("MVC, after async service");
+
+        return "Async Service";
     }
 }
