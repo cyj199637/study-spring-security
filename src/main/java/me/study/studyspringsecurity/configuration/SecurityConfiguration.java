@@ -10,7 +10,6 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -71,6 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests()
                 .mvcMatchers("/").permitAll()
                 .mvcMatchers("/info").permitAll()
+                .mvcMatchers("/signup").permitAll()
                 .mvcMatchers("/accounts").permitAll()
                 .mvcMatchers("/admin").hasRole("ADMIN")
                 .mvcMatchers("/user").hasRole("USER")
@@ -94,6 +94,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity webSecurity) throws Exception {
+//        webSecurity.ignoring().mvcMatchers("/static/favicon.ico");
+//        webSecurity.ignoring().antMatchers("**/favicon.ico");
+//        webSecurity.ignoring().regexMatchers("/static/favicon.ico");
         webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 }
