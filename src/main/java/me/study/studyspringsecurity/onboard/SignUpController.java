@@ -1,4 +1,4 @@
-package me.study.studyspringsecurity.form;
+package me.study.studyspringsecurity.onboard;
 
 import me.study.studyspringsecurity.account.Account;
 import me.study.studyspringsecurity.account.AccountService;

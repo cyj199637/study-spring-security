@@ -84,8 +84,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // CSRF 토큰을 안 보내도 401로 응답하지 않게끔 해주는 설정
         httpSecurity.csrf()
             .ignoringAntMatchers("/accounts");
-        httpSecurity.formLogin();
+
+        httpSecurity.formLogin()
+                    .loginPage("/login").permitAll();
+
         httpSecurity.httpBasic();
+
+        httpSecurity.logout()
+                    .logoutSuccessUrl("/");
 
         // MODE_INHERITABLETHREADLOCAL: 현재 스레드에서 생성된 하위 스레드에도 동일한 SecurityContext가 공유됨
         //                           -> @Async로 만들어진 하위 스레드에도 공유 가능
