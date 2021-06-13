@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
@@ -36,7 +37,7 @@ DelegatingFilterProxy
  */
 @Configuration
 @EnableWebSecurity
-@Order(1)
+@Order(2)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     // 권한 위계 설정을 위한 커스텀 AccessDecisionmanager 정의
@@ -92,6 +93,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         httpSecurity.logout()
                     .logoutSuccessUrl("/");
+
+        // 인증이 안 된 사용자를 null 대신 AnonymousAuthentication 객체로 대체
+        httpSecurity.anonymous();
+
+        // 동시성 제어
+        httpSecurity.sessionManagement()
+            .sessionFixation()
+                .changeSessionId()
+            .maximumSessions(1)
+                .expiredUrl("/");
+//                  .maxSessionsPreventsLogin(true);
+
+        httpSecurity.sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // MODE_INHERITABLETHREADLOCAL: 현재 스레드에서 생성된 하위 스레드에도 동일한 SecurityContext가 공유됨
         //                           -> @Async로 만들어진 하위 스레드에도 공유 가능

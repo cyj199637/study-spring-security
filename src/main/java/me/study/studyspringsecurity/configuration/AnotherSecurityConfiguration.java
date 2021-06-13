@@ -18,7 +18,7 @@ import org.springframework.security.web.access.expression.WebExpressionVoter;
 
 @Configuration
 @EnableWebSecurity
-@Order(2)
+@Order(3)
 public class AnotherSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
