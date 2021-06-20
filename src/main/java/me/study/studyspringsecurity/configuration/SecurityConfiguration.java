@@ -2,6 +2,10 @@ package me.study.studyspringsecurity.configuration;
 
 import java.util.Arrays;
 import java.util.List;
+import me.study.studyspringsecurity.account.AccountService;
+import me.study.studyspringsecurity.common.CustomAccessDeniedHandler;
+import me.study.studyspringsecurity.common.LoggingFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -18,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.access.expression.WebExpressionVoter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 /*
 FilterChainProxy: Spring Security에서 사용하는 필터들을 관리하고 실행하는 역할
@@ -39,6 +44,12 @@ DelegatingFilterProxy
 @EnableWebSecurity
 @Order(2)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    CustomAccessDeniedHandler handler;
+
+    @Autowired
+    AccountService accountService;
 
     // 권한 위계 설정을 위한 커스텀 AccessDecisionmanager 정의
     public AccessDecisionManager accessDecisionManager() {
@@ -68,6 +79,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        // 커스텀 필터 추가
+        httpSecurity.addFilterBefore(new LoggingFilter(), WebAsyncManagerIntegrationFilter.class);
+
         httpSecurity.authorizeRequests()
                 .mvcMatchers("/").permitAll()
                 .mvcMatchers("/info").permitAll()
@@ -89,6 +103,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.formLogin()
                     .loginPage("/login").permitAll();
 
+        httpSecurity.rememberMe()
+            .userDetailsService(accountService)
+            .key("remember-me");
+
         httpSecurity.httpBasic();
 
         httpSecurity.logout()
@@ -105,8 +123,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .expiredUrl("/");
 //                  .maxSessionsPreventsLogin(true);
 
-        httpSecurity.sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        httpSecurity.exceptionHandling()
+            .accessDeniedHandler(handler);
 
         // MODE_INHERITABLETHREADLOCAL: 현재 스레드에서 생성된 하위 스레드에도 동일한 SecurityContext가 공유됨
         //                           -> @Async로 만들어진 하위 스레드에도 공유 가능
