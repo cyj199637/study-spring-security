@@ -1,5 +1,7 @@
 package me.study.studyspringsecurity.account;
 
+import me.study.studyspringsecurity.account.domain.Account;
+
 public class AccountContext {
 
     private static final ThreadLocal<Account> ACCOUNT_THREAD_LOCAL = new ThreadLocal<>();

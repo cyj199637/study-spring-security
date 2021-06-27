@@ -1,10 +1,9 @@
 package me.study.studyspringsecurity.form;
 
 import java.util.Collection;
-import me.study.studyspringsecurity.account.Account;
-import me.study.studyspringsecurity.account.AccountContext;
 import me.study.studyspringsecurity.common.SecurityLogger;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +49,7 @@ public class SampleService {
                     - HttpSessionSecurityContextRepository: HttpSession에 SecurityContext를 저장하는 저장소
                 - 로그인 요청이 성공적으로 처리되면, HttpSession에 SecurityContext를 저장
      */
+    @Secured("ROLE_USER")
     public void dashboard() {
 //        Account account = AccountContext.getAccount();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

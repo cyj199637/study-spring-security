@@ -1,7 +1,7 @@
 package me.study.studyspringsecurity.account.dto;
 
 import lombok.Builder;
-import me.study.studyspringsecurity.account.Account;
+import me.study.studyspringsecurity.account.domain.Account;
 
 @Builder
 public class CreateAccountResponse {

@@ -7,6 +7,7 @@ import me.study.studyspringsecurity.common.CustomAccessDeniedHandler;
 import me.study.studyspringsecurity.common.LoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
@@ -14,6 +15,7 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -137,5 +139,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //        webSecurity.ignoring().antMatchers("**/favicon.ico");
 //        webSecurity.ignoring().regexMatchers("/static/favicon.ico");
         webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

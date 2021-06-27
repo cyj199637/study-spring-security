@@ -1,6 +1,6 @@
 package me.study.studyspringsecurity.onboard;
 
-import me.study.studyspringsecurity.account.Account;
+import me.study.studyspringsecurity.account.domain.Account;
 import me.study.studyspringsecurity.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

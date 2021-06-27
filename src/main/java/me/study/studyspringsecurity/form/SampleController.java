@@ -3,6 +3,9 @@ package me.study.studyspringsecurity.form;
 import java.util.concurrent.Callable;
 import me.study.studyspringsecurity.account.AccountContext;
 import me.study.studyspringsecurity.account.AccountRepository;
+import me.study.studyspringsecurity.account.domain.Account;
+import me.study.studyspringsecurity.book.BookRepository;
+import me.study.studyspringsecurity.common.CurrentUser;
 import me.study.studyspringsecurity.common.SecurityLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,12 +24,15 @@ public class SampleController {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private BookRepository bookRepository;
+
     @GetMapping("/")
-    public String index(Model model, Principal principal) {
-        if (principal == null) {
+    public String index(Model model, @CurrentUser Account account) {
+        if (account == null) {
             model.addAttribute("message", "Hello, Spring Security!");
         } else {
-            model.addAttribute("message", "Hello, " + principal.getName() + "!");
+            model.addAttribute("message", "Hello, " + account.getUsername() + "!");
         }
 
         return "index";
@@ -58,6 +64,7 @@ public class SampleController {
     @GetMapping("/user")
     public String user(Model model, Principal principal) {
         model.addAttribute("message", "Hello, User " + principal.getName());
+        model.addAttribute("books", bookRepository.findAllOfCurrentUser());
 
         return "user";
     }

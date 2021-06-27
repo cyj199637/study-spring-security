@@ -1,5 +1,6 @@
 package me.study.studyspringsecurity.account;
 
+import me.study.studyspringsecurity.account.domain.Account;
 import me.study.studyspringsecurity.account.dto.CreateAccountRequest;
 import me.study.studyspringsecurity.account.dto.CreateAccountResponse;
 import org.springframework.beans.factory.annotation.Autowired;

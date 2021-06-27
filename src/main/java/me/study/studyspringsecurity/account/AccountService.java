@@ -1,5 +1,7 @@
 package me.study.studyspringsecurity.account;
 
+import me.study.studyspringsecurity.account.domain.Account;
+import me.study.studyspringsecurity.account.domain.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,11 +31,7 @@ public class AccountService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        return User.builder()
-            .username(account.getUsername())
-            .password(account.getPassword())
-            .roles(account.getRole())
-            .build();
+        return new UserAccount(account);
     }
 
     public Account create(Account account) {

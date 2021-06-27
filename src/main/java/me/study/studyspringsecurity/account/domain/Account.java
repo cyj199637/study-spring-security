@@ -1,4 +1,4 @@
-package me.study.studyspringsecurity.account;
+package me.study.studyspringsecurity.account.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
